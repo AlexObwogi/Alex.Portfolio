@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Grotesk", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-tiktok-cyan: #25F4EE;
+  --color-tiktok-red: #FE2C55;
+  
+  --color-bg-main: var(--bg-main);
+  --color-text-main: var(--text-main);
+  --color-border-main: var(--border-main);
+  --color-card-bg: var(--card-bg);
+}
+
+:root {
+  --bg-main: #000000;
+  --text-main: #ffffff;
+  --border-main: rgba(255, 255, 255, 0.1);
+  --card-bg: rgba(255, 255, 255, 0.02);
+}
+
+:root.light {
+  --bg-main: #f8f9fa;
+  --text-main: #000000;
+  --border-main: rgba(0, 0, 0, 0.1);
+  --card-bg: rgba(0, 0, 0, 0.02);
+}
+
+@layer base {
+  body {
+    @apply bg-bg-main text-text-main selection:bg-tiktok-cyan selection:text-black antialiased font-sans transition-colors duration-500;
+  }
+}
+
+@utility glass {
+  backdrop-filter: blur(40px);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-main);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+.white-glow {
+  text-shadow: 0 0 10px rgba(var(--text-main), 0.5);
+}
+
+.dark .white-glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
