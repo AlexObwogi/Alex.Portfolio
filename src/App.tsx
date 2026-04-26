@@ -10,9 +10,13 @@ import AlexAI from './components/AlexAI';
 import Navbar from './components/Navbar';
 import AdminControls from './components/AdminControls';
 import DiamondTransition from './components/DiamondTransition';
+import { SkillGraph } from './components/SkillGraph';
+import { InteractiveTerminal } from './components/InteractiveTerminal';
 import TechStackPage from './pages/TechStack';
 import ServicesPage from './pages/Services';
-import { Terminal, Code, Cpu, Smartphone, Globe, Mail, Send, CheckCircle, Upload, Image as LucideImage, MessageSquare, Sparkles, Video, Github, ShieldCheck, Award, Trash2, Edit3, Pin, PinOff } from 'lucide-react';
+import CertificationsPage from './pages/Certifications';
+import ResumePage from './pages/Resume';
+import { Terminal, Code, Cpu, Smartphone, Globe, Mail, Send, CheckCircle, Upload, Image as LucideImage, MessageSquare, Sparkles, Video, Github, ShieldCheck, Award, Trash2, Edit3, Pin, PinOff, Twitter, Music, Linkedin, MessageCircle, X } from 'lucide-react';
 import { cn } from './lib/utils';
 import { projects } from './data/projects';
 
@@ -115,7 +119,7 @@ function AboutSection() {
   };
 
   return (
-    <section id="about" className="py-32 px-6 bg-bg-main">
+    <section id="about" className="py-32 px-6 bg-bg-main relative">
       <div className="max-w-7xl mx-auto">
         <SectionHeading subtitle="LAB_PROFILE" title="Engineering Core." />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
@@ -138,11 +142,11 @@ function AboutSection() {
                 <div 
                   key={skill.label} 
                   onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="p-6 bg-card-bg border border-border-main rounded-3xl hover:border-tiktok-cyan transition-all group cursor-pointer active:scale-95"
+                  className="p-6 bg-card-bg border border-border-main rounded-3xl hover:border-tiktok-cyan light:hover:bg-black light:hover:text-white transition-all group cursor-pointer active:scale-95"
                 >
                   <skill.icon className="w-5 h-5 text-tiktok-cyan mb-4 group-hover:scale-110 transition-transform" />
-                  <h4 className="font-bold text-xs uppercase tracking-widest text-text-main mb-1 group-hover:text-tiktok-cyan transition-colors">{skill.label}</h4>
-                  <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">{skill.text}</p>
+                  <h4 className="font-bold text-xs uppercase tracking-widest text-text-main mb-1 group-hover:text-tiktok-cyan light:group-hover:text-white transition-colors">{skill.label}</h4>
+                  <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest group-hover:text-tiktok-cyan/70">{skill.text}</p>
                 </div>
               ))}
             </div>
@@ -213,7 +217,7 @@ function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-32 px-6">
+    <section id="contact" className="py-32 px-6 relative">
       <div className="max-w-7xl mx-auto">
         <SectionHeading subtitle="Network :: Contact" title="Connect Directly." />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -373,10 +377,60 @@ function LandingPage({ toggleTheme, isDark }: { toggleTheme: () => void, isDark:
     <div className="relative min-h-screen">
       <DiamondTransition isVisible={showTransition} />
       <Navbar toggleTheme={toggleTheme} isDark={isDark} />
+      <InteractiveTerminal />
       
       <main>
         <SplitHero />
         <AboutSection />
+        
+        <section id="skills" className="py-20 px-6 overflow-hidden">
+          <div className="max-w-7xl mx-auto">
+            <SectionHeading subtitle="Neural_Network" title="The Arsenal." />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+              <div className="lg:col-span-2">
+                <SkillGraph />
+              </div>
+              <div className="space-y-8">
+                <div className="p-8 bg-card-bg border border-border-main rounded-[2rem] hover:border-tiktok-cyan transition-all">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-tiktok-cyan/10 flex items-center justify-center">
+                      <Terminal className="text-tiktok-cyan w-5 h-5" />
+                    </div>
+                    <h4 className="font-bold uppercase tracking-widest text-sm">System Ops</h4>
+                  </div>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    Real-time visualization of the interconnected tech stack. Each node represents a certified proficiency in modern full-stack development and security engineering.
+                  </p>
+                </div>
+
+                <div className="p-8 bg-card-bg border border-border-main rounded-[2rem] hover:border-tiktok-red transition-all">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-tiktok-red/10 flex items-center justify-center">
+                      <ShieldCheck className="text-tiktok-red w-5 h-5" />
+                    </div>
+                    <h4 className="font-bold uppercase tracking-widest text-sm">Security Layer</h4>
+                  </div>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    Architecting resilient digital perimeters using AWS Security best practices and automated threat detection systems.
+                  </p>
+                </div>
+
+                <div className="p-8 bg-card-bg border border-border-main rounded-[2rem] hover:border-green-500 transition-all">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                      <Cpu className="text-green-500 w-5 h-5" />
+                    </div>
+                    <h4 className="font-bold uppercase tracking-widest text-sm">AI Integration</h4>
+                  </div>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    Leveraging Google Gemini and Vector Databases to build context-aware intelligent agents and predictive workflows.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section id="projects" className="relative overflow-hidden bg-bg-main border-y border-border-main">
           <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-text-main/[0.03] to-transparent pointer-events-none" />
           <ProjectGrid limit={3} />
@@ -387,7 +441,6 @@ function LandingPage({ toggleTheme, isDark }: { toggleTheme: () => void, isDark:
           </div>
           <ExperienceTimeline />
         </section>
-        <CertificationSection />
         <ContactSection />
       </main>
 
@@ -442,6 +495,14 @@ function AdminPage({ toggleTheme, isDark }: { toggleTheme: () => void, isDark: b
   const [allProjects, setAllProjects] = useState<any[]>([]);
   const [allCerts, setAllCerts] = useState<any[]>([]);
   const [editingProject, setEditingProject] = useState<any>(null);
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsLoggedIn(false);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
 
   // Certification upload states
   const [certTitle, setCertTitle] = useState('');
@@ -1032,20 +1093,130 @@ export default function App() {
     }
   }, [isDark]);
 
+  const [activeProject, setActiveProject] = useState<any>(null);
+  const [modalType, setModalType] = useState<'summary' | 'docs' | null>(null);
+
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#view-')) {
+        const titleSlug = hash.replace('#view-', '');
+        const project = projects.find(p => p.title.toLowerCase().replace(/\s+/g, '-') === titleSlug);
+        if (project) {
+          setActiveProject(project);
+          setModalType('summary');
+        }
+      } else {
+        setActiveProject(null);
+        setModalType(null);
+      }
+    };
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  const closeProjectModal = () => {
+    window.location.hash = '';
+    setActiveProject(null);
+    setModalType(null);
+  };
+
   const toggleTheme = () => setIsDark(!isDark);
 
   return (
     <Router>
-      <CinematicBackground isDark={isDark} />
-      <SocialDock />
-      <AlexAI />
-      
-      <Routes>
+      <div className="relative min-h-screen">
+        <CinematicBackground isDark={isDark} />
+        <SocialDock />
+        <AlexAI />
+
+        <AnimatePresence>
+          {activeProject && modalType && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[999] flex items-center justify-center p-4 lg:p-6 pointer-events-auto"
+            >
+              <div 
+                className="absolute inset-0 bg-black/95 backdrop-blur-3xl cursor-pointer" 
+                onClick={closeProjectModal}
+              />
+              
+              <motion.div 
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                className="bg-black border border-white/20 rounded-[40px] w-full max-w-4xl overflow-hidden shadow-[0_0_150px_rgba(37,244,238,0.1)] p-1 max-h-[90vh] overflow-y-auto relative z-[1000] pointer-events-auto"
+              >
+                 <div className="p-6 lg:p-8 border-b border-white/10 flex items-center justify-between sticky top-0 bg-black/90 backdrop-blur-md z-[520]">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                        <Terminal className="w-4 h-4 text-tiktok-cyan" />
+                      </div>
+                      <span className="font-mono text-[9px] text-tiktok-cyan uppercase tracking-[0.3em] font-black">
+                        {modalType === 'summary' ? 'Technical Architecture' : 'Project Insights'}
+                      </span>
+                    </div>
+                    <button 
+                      onClick={closeProjectModal} 
+                      className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:text-tiktok-red hover:bg-tiktok-red/20 transition-all cursor-pointer shadow-xl relative z-[1010] active:scale-90"
+                    >
+                      <X className="w-6 h-6 pointer-events-none" />
+                    </button>
+                 </div>
+                 <div className="p-6 lg:p-12 space-y-10 selection:bg-tiktok-cyan selection:text-black">
+                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+                      <h3 className="text-4xl lg:text-6xl font-black text-white tracking-widest uppercase leading-none">{activeProject.title}</h3>
+                      <div className="flex gap-4">
+                        <a href={activeProject.liveUrl} target="_blank" rel="noreferrer" className="text-[9px] font-mono text-black bg-tiktok-cyan px-6 py-3 rounded-full hover:scale-105 transition-all font-black uppercase tracking-widest">Live</a>
+                        <a href={activeProject.repoUrl} target="_blank" rel="noreferrer" className="text-[9px] font-mono text-white border border-white/10 px-6 py-3 rounded-full hover:bg-white/5 transition-all font-black uppercase tracking-widest">Repo</a>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 border border-white/10 p-8 lg:p-10 rounded-[40px] font-mono text-sm leading-relaxed text-gray-400">
+                       <p className="text-tiktok-cyan mb-8 uppercase tracking-[0.3em] text-[9px] font-black flex items-center gap-3">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiktok-cyan animate-pulse" />
+                          Architecture_Analysis :: Active
+                       </p>
+                       <div className="prose prose-invert max-w-none text-xs lg:text-sm text-gray-400">
+                         {activeProject.technicalSummary || activeProject.description}
+                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                      {activeProject.techStack?.map((tech: string) => (
+                        <div key={tech} className="p-6 bg-white/5 border border-white/10 rounded-[32px] flex items-center gap-3">
+                           <div className="w-1 h-1 rounded-full bg-tiktok-cyan/50" />
+                           <span className="text-[10px] font-mono text-gray-400 font-bold uppercase tracking-widest">{tech}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex justify-end pt-6">
+                       <button 
+                         onClick={closeProjectModal}
+                         className="px-12 py-5 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-full hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-lg shadow-white/20"
+                       >
+                          Close_Session
+                       </button>
+                    </div>
+                 </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <Routes>
         <Route path="/" element={<LandingPage toggleTheme={toggleTheme} isDark={isDark} />} />
         <Route path="/admin" element={<AdminPage toggleTheme={toggleTheme} isDark={isDark} />} />
         <Route path="/tech-stack" element={<TechStackPage toggleTheme={toggleTheme} isDark={isDark} />} />
         <Route path="/services" element={<ServicesPage toggleTheme={toggleTheme} isDark={isDark} />} />
+        <Route path="/credentials" element={<CertificationsPage toggleTheme={toggleTheme} isDark={isDark} />} />
+        <Route path="/resume" element={<ResumePage toggleTheme={toggleTheme} isDark={isDark} />} />
       </Routes>
+      </div>
     </Router>
   );
 }

@@ -1,136 +1,128 @@
 import { motion } from 'motion/react';
-import Navbar from '../components/Navbar';
-import { SectionHeading } from '../App';
-import { Code, Shield, Smartphone, Globe, Cloud, Terminal, ExternalLink } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { ShieldCheck, Cpu, Code, Database, Globe, Smartphone, ArrowRight, Home } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { projects } from '../data/projects';
+import { SectionHeading } from '../App';
+import Navbar from '../components/Navbar';
 
-const SERVICES = [
+const services = [
   {
+    id: 'sec-automation',
+    title: 'Security Automation',
+    icon: ShieldCheck,
+    description: 'Developing automated security perimeters using Boto3, Python, and AWS Lambda. Targeted at zero-trust architectures and continuous compliance.',
+    projects: ['Sentinel Cloud', 'HardenSys'],
+    color: 'tiktok-cyan'
+  },
+  {
+    id: 'fullstack',
+    title: 'Fullstack Systems',
     icon: Code,
-    title: 'Fullstack Development',
-    desc: 'End-to-end MERN stack engineering with a focus on scalable architecture and clean code. Every module is built for growth.',
-    project: 'SmartRent AI',
-    skills: ['React', 'Node.js', 'MongoDB', 'Redis']
+    description: 'Architecting high-performance MERN stack applications with real-time capabilities and AI integration.',
+    projects: ['SmartRent AI', 'MERN Estate', 'VibeChat'],
+    color: 'tiktok-red'
   },
   {
+    id: 'cloud-iac',
+    title: 'Cloud Infrastructure',
     icon: Globe,
-    title: 'Dynamic Web Development',
-    desc: 'Interactive, responsive, and performance-optimized frontends. I build seamless user experiences with modern frameworks.',
-    project: 'MERN Estate',
-    skills: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Redux']
+    description: 'Infrastructure as Code deployment using Terraform and Go. Automating cloud provisioning with high availability.',
+    projects: ['AutoTerra', 'Sentinel Cloud'],
+    color: 'tiktok-cyan'
   },
   {
-    icon: Cloud,
-    title: 'CI/CD & DevOps Engineering',
-    desc: 'Automating deployment pipelines for maximum efficiency. Reducing downtime through robust version control and delivery workflows.',
-    project: 'AutoTerra',
-    skills: ['GitHub Actions', 'Docker', 'Go', 'Cloud Build']
-  },
-  {
-    icon: Shield,
-    title: 'Cloud Security Audit',
-    desc: 'Automated auditing and perimeter defense for AWS/GCP. Implementing Zero-Trust policies and proactive monitoring.',
-    project: 'Sentinel Cloud',
-    skills: ['IAM Control', 'S3 Hardening', 'Audit Python', 'Boto3']
-  },
-  {
-    icon: Terminal,
-    title: 'Systems Automation',
-    desc: 'Linux environment hardening and Bash/Python script automation. Reducing human oversight through optimized workflows.',
-    project: 'HardenSys',
-    skills: ['Linux Kernel', 'Shell Scripting', 'SSH Security', 'Cron Hooks']
-  },
-  {
-    icon: Smartphone,
-    title: 'Database Architecture',
-    desc: 'Designing high-throughput schemas and ERI diagrams. Optimizing data persistence for scale and performance.',
-    project: 'SmartRent AI',
-    skills: ['MongoDB', 'SQL', 'Data Modeling', 'Normalization']
+    id: 'backend',
+    title: 'Secure Backend Design',
+    icon: Database,
+    description: 'Robust authentication systems, JWT handling, and multi-tenant database architectures.',
+    projects: ['AuthGuard', 'Nexus Terminal'],
+    color: 'white'
   }
 ];
 
 export default function ServicesPage({ toggleTheme, isDark }: { toggleTheme: () => void, isDark: boolean }) {
   return (
-    <div className="min-h-screen bg-bg-main font-sans">
+    <div className="min-h-screen bg-bg-main relative">
       <Navbar toggleTheme={toggleTheme} isDark={isDark} />
       
-      <div className="max-w-7xl mx-auto px-6 pt-40 pb-32">
-        <div className="flex items-center gap-4 mb-10">
-           <button 
-             onClick={() => window.history.back()}
-             className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-tiktok-cyan hover:text-black transition-all shadow-lg group"
-           >
-             <Terminal className="w-5 h-5 rotate-180 group-hover:scale-110 transition-transform" />
-           </button>
-           <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-gray-500">Back to Previous</span>
+      <main className="max-w-7xl mx-auto px-6 pt-40 pb-32">
+        <div className="flex items-center gap-4 mb-20 text-[10px] font-mono tracking-[0.3em] uppercase opacity-50">
+           <Link to="/" className="hover:text-tiktok-cyan transition-colors">Home</Link>
+           <span>/</span>
+           <span className="text-tiktok-cyan">Services</span>
         </div>
 
-        <SectionHeading subtitle="OFFERINGS :: MODULES" title="Professional Services." />
-        
+        <SectionHeading subtitle="SERVICE_INVENTORY" title="Engineering Solutions." />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {SERVICES.map((service, index) => {
-            const linkedProject = projects.find(p => p.title === service.project);
-            
-            return (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card-bg border border-border-main p-10 rounded-[40px] group hover:border-tiktok-cyan transition-all"
-              >
-                <div className="flex items-start justify-between mb-8">
-                  <div className="w-14 h-14 rounded-2xl bg-tiktok-cyan/10 flex items-center justify-center border border-tiktok-cyan/20 group-hover:scale-110 transition-transform">
-                    <service.icon className="w-7 h-7 text-tiktok-cyan" />
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {service.skills.map(skill => (
-                      <span key={skill} className="px-3 py-1 bg-white/5 rounded-full text-[8px] font-mono uppercase tracking-widest text-gray-500">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
+          {services.map((service, idx) => (
+            <motion.div
+              key={service.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              className="bg-card-bg border border-border-main p-12 rounded-[48px] group hover:border-tiktok-cyan transition-all relative overflow-hidden"
+            >
+              <div className={cn(
+                "absolute -right-10 -top-10 w-40 h-40 rounded-full blur-[80px] opacity-10 group-hover:opacity-30 transition-all",
+                service.color === 'tiktok-cyan' ? 'bg-tiktok-cyan' : service.color === 'tiktok-red' ? 'bg-tiktok-red' : 'bg-white'
+              )} />
+
+              <div className="flex items-start justify-between mb-10">
+                <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <service.icon className="w-8 h-8 text-tiktok-cyan" />
                 </div>
+                <div className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">SRV::{service.id}</div>
+              </div>
 
-                <h3 className="text-2xl font-black text-text-main uppercase tracking-tighter mb-4">{service.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed font-medium mb-8">
-                  {service.desc}
-                </p>
+              <h3 className="text-3xl font-black text-text-main uppercase tracking-tighter mb-4 group-hover:text-tiktok-cyan transition-colors">
+                {service.title}
+              </h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-12 max-w-md">
+                {service.description}
+              </p>
 
-                {linkedProject && (
-                  <div className="pt-8 border-t border-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-tiktok-cyan" />
-                      <span className="text-[10px] font-bold text-text-main uppercase tracking-widest">Case Study :: {linkedProject.title}</span>
-                    </div>
-                    <button 
-                      onClick={() => window.location.href = `/#view-${linkedProject.title.replace(/\s+/g, '-')}`}
-                      className="text-[9px] font-mono text-tiktok-cyan uppercase tracking-widest font-black flex items-center gap-2 group-hover:translate-x-2 transition-transform"
-                    >
-                      View Samples <ExternalLink className="w-3 h-3" />
-                    </button>
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
+              <div className="space-y-6">
+                <h4 className="text-[10px] font-mono text-gray-600 uppercase tracking-widest font-black flex items-center gap-2">
+                  <ArrowRight className="w-3 h-3" /> Linked_Artifacts
+                </h4>
+                <div className="flex flex-wrap gap-3">
+                  {service.projects.map(pTitle => {
+                    const project = projects.find(p => p.title === pTitle);
+                    return project ? (
+                      <Link 
+                        key={pTitle}
+                        to={`/#view-${pTitle.toLowerCase().replace(/ /g, '-')}`}
+                        className="px-6 py-3 rounded-full bg-white/5 border border-white/10 text-[9px] font-mono text-gray-400 uppercase tracking-widest hover:border-tiktok-cyan hover:text-white transition-all hover:bg-tiktok-cyan/10"
+                      >
+                        {pTitle}
+                      </Link>
+                    ) : (
+                      <span key={pTitle} className="px-6 py-3 rounded-full bg-white/5 border border-white/10 text-[9px] font-mono text-gray-700 uppercase tracking-widest opacity-50 cursor-not-allowed">
+                        {pTitle}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
+      </main>
 
-        <div className="mt-20 p-12 bg-tiktok-cyan rounded-[48px] flex flex-col lg:flex-row items-center justify-between gap-10">
-          <div className="space-y-4">
-            <h3 className="text-4xl font-black text-black uppercase tracking-tighter leading-none">Need a Specialized<br/>Security Override?</h3>
-            <p className="text-black/60 font-medium max-w-md">I am currently available for high-bandwidth engineering roles and technical consulting.</p>
-          </div>
-          <button 
-            onClick={() => window.location.href = '/#contact'}
-            className="px-12 py-5 bg-black text-white font-black uppercase tracking-widest text-xs rounded-full hover:scale-105 active:scale-95 transition-all shadow-2xl"
-          >
-            Initiate Contact
-          </button>
-        </div>
-      </div>
+      <footer className="py-20 px-6 border-t border-border-main bg-black/20 text-center">
+         <div className="flex justify-center gap-8 mb-8">
+            <a href="#" className="w-10 h-10 rounded-full bg-card-bg flex items-center justify-center text-gray-500 hover:text-tiktok-cyan hover:border-tiktok-cyan border border-border-main transition-all">
+               <Smartphone className="w-4 h-4" />
+            </a>
+            <a href="#" className="w-10 h-10 rounded-full bg-card-bg flex items-center justify-center text-gray-500 hover:text-tiktok-cyan hover:border-tiktok-cyan border border-border-main transition-all">
+               <Code className="w-4 h-4" />
+            </a>
+         </div>
+         <p className="text-[10px] font-mono text-gray-700 uppercase tracking-widest">Defense Solutions :: 2026</p>
+      </footer>
     </div>
   );
 }
+
+import { cn } from '../lib/utils';

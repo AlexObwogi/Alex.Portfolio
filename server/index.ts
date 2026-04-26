@@ -7,8 +7,9 @@ import mongoose from 'mongoose';
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import { ProjectModel } from './models/Project.js';
-import { CertificationModel } from './models/Certification.js';
+import compression from 'compression';
+import { ProjectModel } from './models/Project';
+import { CertificationModel } from './models/Certification';
 
 dotenv.config();
 
@@ -16,7 +17,12 @@ dotenv.config();
 if (process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('[DATABASE] Connected to MongoDB Atlas'))
-    .catch(err => console.error('[DATABASE] Connection Error:', err));
+    .catch(err => {
+      console.error('[DATABASE] Connection Error:', err);
+      // Don't crash the server, just log the error
+    });
+} else {
+  console.warn('[DATABASE] MONGODB_URI not found. Server running in limited data mode.');
 }
 
 // Configure Cloudinary
@@ -51,11 +57,13 @@ const uploadVideo = multer({ storage: videoStorage });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const app = express();
+
 async function startServer() {
-  const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
   app.use(express.json());
+  app.use(compression());
 
   // API Routes
   app.get('/api/health', (req, res) => {
@@ -225,3 +233,5 @@ async function startServer() {
 }
 
 startServer();
+
+export default app;

@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, User, Briefcase, Mail, Home, MessageSquare, Sun, Moon, Sparkles, LayoutGrid, Code, Cpu, ShieldCheck } from 'lucide-react';
+import { Menu, X, Terminal, User, Briefcase, Mail, Home, MessageSquare, Sun, Moon, Sparkles, LayoutGrid, Code, Cpu, ShieldCheck, FileText, Award } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 const navItems = [
   { name: 'Home', path: '/', isSection: true, icon: Home },
   { name: 'About', path: 'about', isSection: true, icon: User },
-  { name: 'Services', path: '/services', isSection: false, icon: ShieldCheck },
-  { name: 'Stack', path: '/tech-stack', isSection: false, icon: Code },
-  { name: 'Projects', path: 'projects', isSection: true, icon: LayoutGrid },
-  { name: 'Exp', path: 'experience', isSection: true, icon: Briefcase },
+  { name: 'Services', path: '/services', isSection: false, icon: Cpu },
+  { name: 'Tech Stack', path: '/tech-stack', isSection: false, icon: LayoutGrid },
+  { name: 'Projects', path: 'projects', isSection: true, icon: Code },
+  { name: 'Timeline', path: 'experience', isSection: true, icon: Briefcase },
+  { name: 'Credentials', path: '/credentials', isSection: false, icon: Award },
+  { name: 'Resume', path: '/resume', isSection: false, icon: FileText },
   { name: 'Contact', path: 'contact', isSection: true, icon: Mail },
 ];
 
@@ -77,19 +79,27 @@ export default function Navbar({ toggleTheme, isDark }: { toggleTheme: () => voi
               </div>
             </Link>
           )}
-          <span className="font-mono font-black text-lg tracking-[0.2em] uppercase hidden xl:block">
-            Alex.Portfolio
-          </span>
+          <div className="flex flex-col">
+            <span className="font-mono font-black text-lg tracking-[0.2em] uppercase hidden md:block">
+              Alex.Portfolio
+            </span>
+            <div className="hidden md:flex items-center gap-1.5 overflow-hidden h-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-tiktok-cyan animate-pulse" />
+              <div className="font-mono text-[7px] text-tiktok-cyan/70 uppercase tracking-[0.3em] whitespace-nowrap animate-marquee">
+                System_Status::Active // Core_Secure // Lab_Sync_Complete // Access_Granted
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-1 bg-white/5 dark:bg-black/20 backdrop-blur-3xl border border-black/5 dark:border-white/10 rounded-full p-1.5 shadow-2xl">
+          {/* Desktop Nav */}
+        <div className="hidden lg:flex items-center gap-1 bg-white/5 dark:bg-black/20 backdrop-blur-3xl border border-black/5 dark:border-white/10 rounded-full p-1.5 shadow-2xl">
           {navItems.map((item) => (
             <button
               key={item.name}
-              onClick={() => handleNavClick(item.path, item.isSection || false, item.isExternal)}
+              onClick={() => handleNavClick(item.path, item.isSection || false)}
               className={cn(
-                "px-3 lg:px-5 py-2 rounded-full text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative group flex items-center gap-2",
+                "px-3 lg:px-4 py-2 rounded-full text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative group flex items-center gap-2",
                 ((item.path === '/' && location.pathname === '/' && !location.hash) || 
                  (location.pathname === '/' && location.hash === `#${item.path}`) ||
                  (location.pathname === item.path)) 
@@ -98,7 +108,7 @@ export default function Navbar({ toggleTheme, isDark }: { toggleTheme: () => voi
               )}
             >
               {item.icon && <item.icon className="w-3.5 h-3.5" />}
-              <span className="hidden lg:inline">{item.name}</span>
+              <span className="hidden md:inline">{item.name}</span>
               <div className="absolute inset-0 bg-tiktok-cyan/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               {((item.path === '/' && location.pathname === '/' && !location.hash) || 
                 (location.pathname === '/' && location.hash === `#${item.path}`) ||
@@ -126,24 +136,24 @@ export default function Navbar({ toggleTheme, isDark }: { toggleTheme: () => voi
           </a>
           <Link 
             to="/admin" 
-            className="ml-4 px-6 py-2 rounded-full bg-tiktok-cyan text-black text-xs font-black uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-[0_0_30px_rgba(37,244,238,0.4)] border border-tiktok-cyan/50 flex items-center gap-2"
+            className="px-5 py-2 rounded-full bg-tiktok-cyan text-black text-xs font-black uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-[0_0_30px_rgba(37,244,238,0.4)] border border-tiktok-cyan/50 flex items-center gap-2 ml-2"
           >
             <Terminal className="w-4 h-4" />
-            <span className="hidden xl:inline">Terminal</span>
+            <span className="hidden md:inline">Terminal</span>
           </Link>
         </div>
 
         {/* Mobile Toggle */}
-        <div className="flex items-center gap-3 md:hidden">
+        <div className="flex items-center gap-3 lg:hidden">
           <button 
             onClick={toggleTheme}
-            className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center transition-all active:scale-95"
+            className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center transition-all active:scale-95 text-text-main"
           >
             {isDark ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
           </button>
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md"
+            className="w-12 h-12 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center backdrop-blur-md text-text-main border border-black/10 dark:border-white/10"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -157,32 +167,35 @@ export default function Navbar({ toggleTheme, isDark }: { toggleTheme: () => voi
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 mt-4 mx-6 p-6 glass flex flex-col gap-4 md:hidden"
+            className="absolute top-full left-0 right-0 mt-4 mx-6 p-6 bg-card-bg dark:bg-black/90 backdrop-blur-2xl flex flex-col gap-4 lg:hidden rounded-[32px] border border-black/10 dark:border-white/10 max-h-[70vh] overflow-y-auto shadow-2xl custom-scrollbar"
           >
             {navItems.map((item) => (
               <button
                 key={item.name}
-                onClick={() => handleNavClick(item.path, item.isSection || false, item.isExternal)}
-                className="flex items-center gap-4 px-4 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-left transition-colors"
+                onClick={() => handleNavClick(item.path, item.isSection || false)}
+                className="flex items-center gap-4 px-6 py-5 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-tiktok-cyan/10 hover:text-tiktok-cyan transition-all text-left border border-transparent hover:border-tiktok-cyan/20"
               >
-                <span className="font-bold uppercase tracking-widest text-sm">{item.name}</span>
+                {item.icon && <item.icon className="w-5 h-5 text-tiktok-cyan" />}
+                <span className="font-bold uppercase tracking-widest text-sm text-text-main group-hover:text-tiktok-cyan">{item.name}</span>
               </button>
             ))}
-            <a 
-              href="https://wa.me/254706050538"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-center gap-2 p-4 rounded-2xl bg-[#25D366] text-white font-bold uppercase tracking-widest text-sm"
-            >
-              <MessageSquare className="w-5 h-5" /> WhatsApp Me
-            </a>
-            <Link 
-              to="/admin" 
-              onClick={() => setIsMenuOpen(false)}
-              className="mt-2 w-full py-4 rounded-2xl bg-tiktok-red text-white text-center font-bold uppercase tracking-widest text-sm"
-            >
-              Admin Terminal
-            </Link>
+            <div className="pt-4 mt-2 border-t border-black/5 dark:border-white/10 space-y-4">
+              <a 
+                href="https://wa.me/254706050538"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 p-5 rounded-2xl bg-[#25D366] text-white font-bold uppercase tracking-widest text-sm shadow-lg shadow-[#25D366]/20"
+              >
+                <MessageSquare className="w-5 h-5" /> WhatsApp Me
+              </a>
+              <Link 
+                to="/admin" 
+                onClick={() => setIsMenuOpen(false)}
+                className="w-full py-5 rounded-2xl bg-tiktok-cyan text-black text-center font-bold uppercase tracking-widest text-sm shadow-lg shadow-tiktok-cyan/20 flex items-center justify-center gap-2"
+              >
+                <Terminal className="w-5 h-5" /> Admin Terminal
+              </Link>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

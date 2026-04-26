@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, Bot, X, Maximize2, Minimize2, Sparkles, Terminal, Cpu, MessageSquare, Zap } from 'lucide-react';
+import { Send, User, Bot, X, Maximize2, Minimize2, Sparkles, Terminal, Cpu, MessageSquare, Zap } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { projects } from '../data/projects';
 import { experiences } from '../data/experience';
@@ -168,7 +168,7 @@ export default function AlexAI() {
             {/* Messages */}
             {!isMinimized && (
               <>
-                <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-8 scrollbar-hide bg-[url('https://www.transparenttextures.com/patterns/micro-carbon.png')]">
+                <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-8 scrollbar-hide bg-[url('https://www.transparenttextures.com/patterns/micro-carbon.png')] relative">
                   {messages.map((m, i) => (
                     <motion.div 
                       key={i} 
