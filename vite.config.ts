@@ -6,6 +6,7 @@ import {defineConfig, loadEnv} from 'vite';
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
+    root: '.',
     plugins: [react(), tailwindcss()],
     define: {
       'process.env.AI_ENGINE_KEY': JSON.stringify(env.AI_ENGINE_KEY),
@@ -13,6 +14,15 @@ export default defineConfig(({mode}) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './frontend'),
+      },
+    },
+    build: {
+      outDir: 'dist',
+      emptyOutDir: false, // Keep existing server build if any
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+        },
       },
     },
     server: {
