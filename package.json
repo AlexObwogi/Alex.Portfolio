@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx backend/index.ts",
-    "build": "vite build && npm run build:server",
+    "build": "vite build",
     "build:server": "esbuild backend/index.ts --bundle --platform=node --target=node20 --outfile=dist/server.cjs --format=cjs --external:express --external:vite --external:mongoose --external:cloudinary --external:multer --external:multer-storage-cloudinary --external:compression --external:dotenv --external:@google/genai",
     "preview": "vite preview",
     "start": "node dist/server.cjs",
