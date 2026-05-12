@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import { Cpu, Code2, Globe, Database, Shield, Zap, ExternalLink, Terminal } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Project } from '../data/projects';
-import { SectionHeading } from '../App';
+import { SectionHeading } from '../components/SectionHeading';
 
 const TECH_CATEGORIES = [
   {
@@ -62,7 +62,7 @@ export default function TechStackPage({ toggleTheme, isDark }: { toggleTheme: ()
       <Navbar toggleTheme={toggleTheme} isDark={isDark} />
       <div className="max-w-7xl mx-auto space-y-24">
         <div className="space-y-4">
-          <SectionHeading subtitle="Ecosystem :: Core" title="Technological Mastery." />
+          <SectionHeading subtitle="Core Stack" title="Technological Mastery." />
           <p className="max-w-2xl text-gray-500 font-mono text-sm uppercase tracking-widest leading-relaxed">
             Building secure ecosystems requires mastery over the full stack. From low-level systems to high-level cloud architectures, these are my tools for crafting digital resilience.
           </p>

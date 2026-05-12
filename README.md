@@ -1,49 +1,58 @@
-# Alex's Professional Portfolio & AI Assistant
+# Alex Obwogi | Quantitative Software Engineering Portfolio
 
-A high-performance, full-stack portfolio for a **Software Engineer & Cloud Security Specialist**. This project features a unified white-on-black aesthetic, an AI digital twin ("Alex") powered by Gemini Pro, and a secure admin command center.
+A high-performance, full-stack portfolio and professional management system built for high-scale data visualization and quantitative analysis demonstration.
 
-## 🚀 Live Deployment (Render & GitHub)
+## 🚀 Architecture
 
-This project is optimized for deployment on **Render** via GitHub integration.
+The system is architected as a decoupled Fullstack application:
+- **Frontend**: React 19 + Vite + Tailwind CSS 4.0. Utilizing Framer Motion for cinematic UI transitions and Three.js for interactive data visualization.
+- **Backend**: Node.js + Express. Highly optimized API routes with Server-Sent Events (SSE) for real-time data synchronization.
+- **Database**: MongoDB (Mongoose) for structured data and Cloudinary for high-performance asset delivery.
 
-### 1. Prerequisites
-- A [GitHub](https://github.com) account.
-- A [Render](https://render.com) account.
-- A **Google AI Studio API Key** (Get it at [aistudio.google.com](https://aistudio.google.com/app/apikey)).
-- A **MongoDB Atlas** connection string (for persistence, optional if using mock data).
+## 🛠 Tech Stack
 
-### 2. Local Setup
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file based on `.env.example` and fill in your secrets.
-4. Run in development mode:
-   ```bash
-   npm run dev
-   ```
+- **Core**: React, TypeScript, Node.js, Express
+- **Visuals**: Three.js, Framer Motion, Tailwind CSS
+- **Data**: MongoDB, Recharts, D3.js
+- **Services**: Cloudinary API, Generative AI Engine (Content Tailoring), SSE Real-time Updates
 
-### 3. Deploying to Render
-1. Push your code to a private GitHub repository.
-2. Log in to Render and create a **New Web Service**.
-3. Connect your GitHub repository.
-4. Render will detect the `render.yaml` or use the following settings:
-   - **Environment:** `Node`
-   - **Build Command:** `npm install && npm run build`
-   - **Start Command:** `npm start`
-5. **CRITICAL:** Add the following Environment Variables in the Render Dashboard:
-   - `NODE_ENV`: `production`
-   - `GEMINI_API_KEY`: (Your Google API Key)
-   - `ADMIN_PASSWORD`: (Your chosen admin password)
-   - `JWT_SECRET`: (Any random string for security)
-   - `MONGODB_URI`: (Your Database URI)
+## 📋 Features
 
-## 🛠️ Features
-- **AI Digital Twin:** Conversational assistant powered by Gemini 1.5 Flash.
-- **Secure Terminal:** Admin panel protected by server-side password validation.
-- **Project Scape:** Automated project deployment simulation and management.
-- **High-Fidelity UI:** Framer Motion (motion) animations with a premium dark theme.
+- **Dynamic Resume Engine**: Real-time tailoring of professional narratives using advanced LLM integration.
+- **Client Work Ledger**: Detailed repository of freelance and contract systems delivery.
+- **Project Lab**: Comprehensive showcase of engineering projects with technical briefs and AI-driven analysis.
+- **Admin Command Center**: Secure control panel for real-time content management and site performance monitoring.
+- **Interactive Skill Graph**: 3D visualization of technical expertise and system interconnectivity.
 
-## 🔒 Security Note
-This project uses server-side environment variables to protect API keys. **Never commit your `.env` file to GitHub.** The `.env.example` file is provided as a template.
+## 🔧 Installation & Deployment
+
+### Environment Setup
+Create a `.env` file in the root directory:
+```env
+MONGODB_URI=your_mongodb_connection_string
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+GEMINI_API_KEY=your_ai_engine_key
+JWT_SECRET=your_secure_random_string
+```
+
+### Development
+```bash
+npm install
+npm run dev
+```
+
+### Production Build
+```bash
+npm run build
+npm start
+```
+
+## 🔒 Security
+- **JWT Authentication**: Secure admin access via JSON Web Tokens.
+- **CSP & CORS**: Hardened headers and cross-origin resource sharing policies.
+- **Data Integrity**: Real-time sync via SSE to ensure UI consistency across multiple sessions.
+
+---
+*Professional Portfolio | Engineered by Alex Obwogi*

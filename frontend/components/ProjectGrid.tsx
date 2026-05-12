@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { projects as staticProjects, Project } from '../data/projects';
-import { ExternalLink, Github, Terminal, X, Cpu, Layers, Globe, Video, FileText, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Github, Terminal, X, Cpu, Layers, Globe, Video, FileText, CheckCircle2, ArrowRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export default function ProjectGrid({ limit }: { limit?: number }) {
@@ -14,10 +14,22 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
     setIsPlayingVideo(false);
   }, [selectedProject]);
 
+  const lastFetchRef = useRef<number>(0);
+
   useEffect(() => {
     const fetchProjects = async () => {
+      const now = Date.now();
+      if (now - lastFetchRef.current < 2000) return;
+      lastFetchRef.current = now;
+
       try {
-        const res = await fetch('/api/projects');
+        const res = await fetch(`/api/projects?t=${now}`, {
+          cache: 'no-store',
+          headers: {
+            'Pragma': 'no-cache',
+            'Cache-Control': 'no-cache'
+          }
+        });
         if (res.ok && res.headers.get('content-type')?.includes('application/json')) {
           const apiProjects = await res.json();
           const normalizedApiProjects = apiProjects.map((p: any) => ({
@@ -30,7 +42,18 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
         console.error('Failed to fetch projects:', err);
       }
     };
+    
     fetchProjects();
+
+    const handleSync = (e: any) => {
+      if (e.detail?.type?.startsWith('PROJECT_')) {
+        console.log('[PROJECT_GRID] Sync triggered by SSE');
+        fetchProjects();
+      }
+    };
+
+    window.addEventListener('DATA_SYNC_EVENT', handleSync as EventListener);
+    return () => window.removeEventListener('DATA_SYNC_EVENT', handleSync as EventListener);
   }, []);
 
   const allTags = Array.from(new Set([
@@ -42,13 +65,27 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
     ? projects 
     : projects.filter(p => (p.languages || []).includes(activeFilter) || (p.techStack || []).includes(activeFilter));
 
-  const pinnedProjects = filteredProjects.filter(p => p.isPinned)
-    .sort((a, b) => a.title === 'SmartRent AI' ? -1 : b.title === 'SmartRent AI' ? 1 : 0)
-    .slice(0, 5);
-  
-  const otherProjects = filteredProjects.filter(p => !pinnedProjects.find(pp => pp.id === p.id));
-  const sortedProjects = [...pinnedProjects, ...otherProjects];
-  const displayProjects = limit ? sortedProjects.slice(0, limit) : sortedProjects;
+  // Sorting Priority:
+  // 1. API Projects (Newest additions)
+  // 2. Pinned Static Projects
+  // 3. Rest
+  const sortedProjects = [...filteredProjects].sort((a, b) => {
+    const aIsApi = (a as any)._id || a.id.length > 5;
+    const bIsApi = (b as any)._id || b.id.length > 5;
+
+    if (aIsApi && !bIsApi) return -1;
+    if (!aIsApi && bIsApi) return 1;
+
+    // Both are same type, check pinning
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+
+    return 0;
+  });
+
+  const [localLimit, setLocalLimit] = useState(limit);
+  const displayProjects = localLimit ? sortedProjects.slice(0, localLimit) : sortedProjects;
+  const hasMore = localLimit ? sortedProjects.length > localLimit : false;
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-32 relative">
@@ -59,14 +96,14 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
             whileInView={{ opacity: 1, x: 0 }}
             className="text-[10px] font-mono tracking-[0.5em] text-gray-500 uppercase mb-4"
           >
-            Portfolio :: Repository
+            PROJECT REPOSITORY
           </motion.h2>
           <h3 className="text-5xl lg:text-8xl font-black text-text-main tracking-widest uppercase leading-none">
-            The<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-text-main to-gray-500">Showcase.</span>
+            Strategic<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-text-main to-gray-500">Repository.</span>
           </h3>
         </div>
         <div className="text-gray-500 font-mono text-[10px] max-w-xs uppercase leading-relaxed tracking-widest bg-card-bg p-6 rounded-[32px] border border-border-main">
-           Theoretical foundation. Practical engineering. Computer Science Graduate Portfolio.
+           Systemic logic. Market-scale engineering. Bridging the gap between high-performance computing and financial modeling.
         </div>
       </div>
 
@@ -132,7 +169,7 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
                  <div className="mb-4">
                    <div className="flex items-center justify-between mb-2">
                      <h4 className="text-[9px] font-mono text-gray-500 tracking-[0.3em] uppercase font-black">
-                       PKT_ID::{String(project.id || index).padStart(2, '0')}
+                       PROJ-{String(project.id || index).padStart(2, '0')}
                      </h4>
                      <div className="w-1.5 h-1.5 rounded-full bg-white opacity-20" />
                    </div>
@@ -173,7 +210,7 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
 
                  <div className="pt-6 flex items-center justify-between border-t border-white/5">
                     <span className="text-[9px] font-mono text-gray-400 uppercase tracking-[0.2em] font-black flex items-center gap-2">
-                       <Terminal className="w-3 h-3" /> Technical_Brief
+                       <Terminal className="w-3 h-3" /> Technical Brief
                     </span>
                  </div>
               </div>
@@ -181,6 +218,23 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
         ))}
         </AnimatePresence>
       </div>
+      
+      {hasMore && (
+        <div className="mt-20 flex justify-center">
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            onClick={() => setLocalLimit(undefined)}
+            className="group relative px-12 py-5 bg-card-bg border border-border-main rounded-full overflow-hidden transition-all hover:border-tiktok-cyan"
+          >
+            <div className="absolute inset-0 bg-tiktok-cyan/0 group-hover:bg-tiktok-cyan/5 transition-colors" />
+            <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 group-hover:text-tiktok-cyan transition-colors flex items-center gap-4">
+              Explore Full Repository
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
+            </span>
+          </motion.button>
+        </div>
+      )}
 
       <AnimatePresence>
         {selectedProject && (
@@ -245,7 +299,7 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
                    <div className="space-y-12">
                       <div>
                         <h4 className="text-[10px] font-mono text-gray-500 tracking-[0.4em] uppercase mb-6 flex items-center gap-3">
-                          <Cpu className="w-4 h-4 text-tiktok-cyan" /> Core_Architecture
+                          <Cpu className="w-4 h-4 text-tiktok-cyan" /> Core Architecture
                         </h4>
                         <div className="flex flex-wrap gap-2">
                            {Array.from(new Set((selectedProject.techStack || []).map(t => t.trim()))).map((tech, i) => (
@@ -263,7 +317,7 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
                            rel="noreferrer"
                            className="w-full py-5 bg-tiktok-cyan text-black font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-4 hover:shadow-[0_0_40px_rgba(37,244,238,0.3)] transition-all"
                          >
-                           <Globe className="w-5 h-5" /> Execute_Live_Deploy
+                           <Globe className="w-5 h-5" /> View Project Site
                          </a>
                          <a 
                            href={selectedProject.repoUrl} 
@@ -271,7 +325,7 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
                            rel="noreferrer"
                            className="w-full py-5 bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-4 hover:bg-white/10 transition-all"
                          >
-                           <Github className="w-5 h-5" /> Mirror_Source_Code
+                           <Github className="w-5 h-5" /> View Source Code
                          </a>
                       </div>
                    </div>
@@ -282,7 +336,7 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
                    <div className="space-y-4">
                       <div className="flex items-center gap-3 text-tiktok-cyan/40 mb-2">
                          <Terminal className="w-4 h-4" />
-                         <span className="text-[10px] font-mono tracking-[0.3em] uppercase">Status::Production_Ready</span>
+                         <span className="text-[10px] font-mono tracking-[0.3em] uppercase">Status: Production Ready</span>
                       </div>
                       <h2 className="text-4xl lg:text-6xl font-black text-text-main tracking-tight uppercase">
                         {selectedProject.title}
@@ -290,6 +344,16 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
                       <p className="text-lg text-gray-400 font-medium leading-relaxed">
                         {selectedProject.description}
                       </p>
+                      
+                      {selectedProject.quantitativeSkills && selectedProject.quantitativeSkills.length > 0 && (
+                        <div className="flex flex-wrap gap-3 pt-4">
+                          {selectedProject.quantitativeSkills.map((skill, i) => (
+                             <span key={i} className="px-4 py-2 bg-tiktok-cyan/10 border border-tiktok-cyan/30 rounded-xl text-[10px] text-tiktok-cyan font-black uppercase tracking-widest shadow-[0_0_15px_rgba(37,244,238,0.1)]">
+                               {skill}
+                             </span>
+                          ))}
+                        </div>
+                      )}
                    </div>
 
                    <div className="space-y-8">
@@ -298,7 +362,7 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
                             <Layers className="w-20 h-20" />
                          </div>
                          <h4 className="text-[10px] font-mono text-tiktok-cyan tracking-[0.4em] uppercase mb-6 flex items-center gap-3">
-                            <FileText className="w-4 h-4" /> Technical_Executive_Summary
+                            <FileText className="w-4 h-4" /> Technical Summary
                          </h4>
                          <p className="text-sm text-gray-300 leading-loose font-mono opacity-80 whitespace-pre-wrap">
                             {selectedProject.technicalSummary}
@@ -307,7 +371,7 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
 
                       <div className="bg-tiktok-cyan/5 border border-tiktok-cyan/10 rounded-[32px] p-8 lg:p-10">
                          <h4 className="text-[10px] font-mono text-tiktok-cyan tracking-[0.4em] uppercase mb-6 flex items-center gap-3">
-                            <Cpu className="w-4 h-4" /> AI_Engine_Analysis
+                            <Cpu className="w-4 h-4" /> AI Analysis
                          </h4>
                          <div className="flex items-start gap-4 p-4 bg-black/40 rounded-2xl border border-tiktok-cyan/20">
                             <CheckCircle2 className="w-6 h-6 text-tiktok-cyan flex-shrink-0 mt-1" />
@@ -328,8 +392,8 @@ export default function ProjectGrid({ limit }: { limit?: number }) {
                          <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-400">Alex Obwogi</p>
                       </div>
                       <div className="space-y-1">
-                         <span className="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Security_Audit</span>
-                         <p className="text-xs font-black uppercase tracking-[0.2em] text-tiktok-cyan">Passed_Level_4</p>
+                         <span className="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Security Audit</span>
+                         <p className="text-xs font-black uppercase tracking-[0.2em] text-tiktok-cyan">Passed Integrity Check</p>
                       </div>
                    </div>
                 </div>

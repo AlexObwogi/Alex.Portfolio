@@ -9,13 +9,13 @@ function Starfield({ isDark }: { isDark: boolean }) {
   const count = 2000;
   const colorHex = isDark ? "#25f4ee" : "#1a1a1a";
   
-  const [positions, colors] = useMemo(() => {
+  const [positions, colors, initialPositions] = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const cols = new Float32Array(count * 3);
+    const initial = new Float32Array(count * 3);
     const color = new THREE.Color(colorHex);
     
     for (let i = 0; i < count; i++) {
-       // Spiral or sparse formation
        const radius = Math.random() * 25 + 5;
        const theta = Math.random() * Math.PI * 2;
        const phi = Math.random() * Math.PI;
@@ -24,11 +24,15 @@ function Starfield({ isDark }: { isDark: boolean }) {
        pos[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
        pos[i * 3 + 2] = radius * Math.cos(phi);
        
+       initial[i * 3] = pos[i * 3];
+       initial[i * 3 + 1] = pos[i * 3 + 1];
+       initial[i * 3 + 2] = pos[i * 3 + 2];
+
        cols[i * 3] = color.r;
        cols[i * 3 + 1] = color.g;
        cols[i * 3 + 2] = color.b;
     }
-    return [pos, cols];
+    return [pos, cols, initial];
   }, [colorHex]);
 
   useFrame((state) => {
@@ -36,6 +40,39 @@ function Starfield({ isDark }: { isDark: boolean }) {
       points.current.rotation.y += 0.0003;
       points.current.rotation.x += 0.0001;
       
+      const mouse = new THREE.Vector3(state.mouse.x * 15, state.mouse.y * 10, 0);
+      const posAttr = points.current.geometry.attributes.position;
+      const positionsArray = posAttr.array as Float32Array;
+
+      for (let i = 0; i < count; i++) {
+        const ix = initialPositions[i * 3];
+        const iy = initialPositions[i * 3 + 1];
+        const iz = initialPositions[i * 3 + 2];
+        
+        const x = positionsArray[i * 3];
+        const y = positionsArray[i * 3 + 1];
+        const z = positionsArray[i * 3 + 2];
+
+        // Spring back to initial
+        positionsArray[i * 3] += (ix - x) * 0.05;
+        positionsArray[i * 3 + 1] += (iy - y) * 0.05;
+        positionsArray[i * 3 + 2] += (iz - z) * 0.05;
+
+        // Mouse repulsion
+        const dx = x - mouse.x;
+        const dy = y - mouse.y;
+        const dz = z - mouse.z;
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        if (dist < 5) {
+          const force = (5 - dist) / 5;
+          positionsArray[i * 3] += dx * force * 0.5;
+          positionsArray[i * 3 + 1] += dy * force * 0.5;
+          positionsArray[i * 3 + 2] += dz * force * 0.5;
+        }
+      }
+      posAttr.needsUpdate = true;
+
       const targetX = state.mouse.x * 0.1;
       const targetY = state.mouse.y * 0.1;
       points.current.position.x += (targetX - points.current.position.x) * 0.02;
@@ -145,18 +182,135 @@ function ShatterField({ isDark }: { isDark: boolean }) {
   );
 }
 
+function NeuralNetwork({ isDark }: { isDark: boolean }) {
+  const pointsRef = useRef<THREE.Points>(null!);
+  const count = 150; // Fewer points for connections
+  const colorHex = isDark ? "#25f4ee" : "#222222";
+  
+  const particles = useMemo(() => {
+    const temp = [];
+    for (let i = 0; i < count; i++) {
+      const radius = 10 + Math.random() * 20;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.random() * Math.PI;
+      temp.push({
+        position: new THREE.Vector3(
+          radius * Math.sin(phi) * Math.cos(theta),
+          radius * Math.sin(phi) * Math.sin(theta),
+          radius * Math.cos(phi)
+        ),
+        velocity: new THREE.Vector3(
+          (Math.random() - 0.5) * 0.01,
+          (Math.random() - 0.5) * 0.01,
+          (Math.random() - 0.5) * 0.01
+        )
+      });
+    }
+    return temp;
+  }, []);
+
+  const linesRef = useRef<THREE.LineSegments>(null!);
+  const lineGeometry = useMemo(() => new THREE.BufferGeometry(), []);
+  const starPositions = useMemo(() => new Float32Array(count * 3), []);
+
+  useFrame((state) => {
+    const positions = [];
+    const color = new THREE.Color(colorHex);
+    
+    particles.forEach((p, i) => {
+      p.position.add(p.velocity);
+      if (p.position.length() > 35) p.position.setLength(15);
+      
+      starPositions[i * 3] = p.position.x;
+      starPositions[i * 3 + 1] = p.position.y;
+      starPositions[i * 3 + 2] = p.position.z;
+    });
+
+    if (pointsRef.current) {
+      pointsRef.current.geometry.attributes.position.needsUpdate = true;
+      pointsRef.current.rotation.y += 0.0005;
+    }
+
+    // Connections logic
+    const connectionPositions = [];
+    for (let i = 0; i < count; i++) {
+      for (let j = i + 1; j < count; j++) {
+        const dist = particles[i].position.distanceTo(particles[j].position);
+        if (dist < 4) {
+          connectionPositions.push(
+            particles[i].position.x, particles[i].position.y, particles[i].position.z,
+            particles[j].position.x, particles[j].position.y, particles[j].position.z
+          );
+        }
+      }
+    }
+
+    if (linesRef.current) {
+      linesRef.current.geometry.setAttribute('position', new THREE.Float32BufferAttribute(connectionPositions, 3));
+      linesRef.current.rotation.y += 0.0005;
+    }
+  });
+
+  return (
+    <group>
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={count}
+            array={starPositions}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial 
+          size={0.08} 
+          color={colorHex}
+          transparent 
+          opacity={isDark ? 0.6 : 0.2} 
+          sizeAttenuation 
+        />
+      </points>
+      <lineSegments ref={linesRef}>
+        <bufferGeometry />
+        <lineBasicMaterial 
+          color={colorHex} 
+          transparent 
+          opacity={isDark ? 0.15 : 0.05} 
+          linewidth={1}
+        />
+      </lineSegments>
+    </group>
+  );
+}
+
 export default function CinematicBackground({ isDark }: { isDark: boolean }) {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [ripple, setRipple] = useState(false);
 
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
     setRipple(true);
     const timer = setTimeout(() => setRipple(false), 800);
-    return () => clearTimeout(timer);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(timer);
+    };
   }, [isDark]);
 
   return (
     <div className="fixed inset-0 -z-10 pointer-events-none transition-colors duration-1000 overflow-hidden" 
          style={{ backgroundColor: isDark ? '#121212' : '#f5f5f2' }}>
+      
+      {/* Dynamic Ambient Glow */}
+      <div 
+        className="absolute inset-0 transition-opacity duration-1000 opacity-40 dark:opacity-20"
+        style={{
+          background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${isDark ? 'rgba(37, 244, 238, 0.15)' : 'rgba(0, 242, 255, 0.1)'}, transparent 50%)`
+        }}
+      />
       
       {/* Light Mode Mesh Gradient */}
       {!isDark && (
@@ -188,8 +342,15 @@ export default function CinematicBackground({ isDark }: { isDark: boolean }) {
         <ambientLight intensity={isDark ? 0.3 : 1} />
         <pointLight position={[10, 10, 10]} intensity={1.5} color={isDark ? "#25f4ee" : "#ffffff"} />
         
+        <NeuralNetwork isDark={isDark} />
         <Starfield isDark={isDark} />
         <ShatterField isDark={isDark} />
+        <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+           <mesh position={[-10, 5, -5]}>
+              <sphereGeometry args={[2, 32, 32]} />
+              <meshBasicMaterial color={isDark ? "#25f4ee" : "#000000"} wireframe opacity={0.05} transparent />
+           </mesh>
+        </Float>
       </Canvas>
     </div>
   );

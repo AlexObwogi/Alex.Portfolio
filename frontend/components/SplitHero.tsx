@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
-import { Zap, Monitor, Code, ShieldCheck, Globe, Database, Terminal, Sparkles } from 'lucide-react';
+import { Zap, Monitor, Code, ShieldCheck, Globe, Database, Terminal, Sparkles, Cpu } from 'lucide-react';
 
 export default function SplitHero() {
   return (
@@ -35,7 +35,7 @@ export default function SplitHero() {
             className="flex items-center space-x-3 bg-tiktok-cyan/10 border border-tiktok-cyan/20 w-fit px-5 py-2 rounded-full backdrop-blur-sm"
           >
             <ShieldCheck className="w-4 h-4 text-tiktok-cyan animate-pulse" />
-            <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-tiktok-cyan font-black">Quantitative_Software_Engineer :: MScFE_Incoming</span>
+            <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-tiktok-cyan font-black">Quantitative Software Engineer | MScFE Candidate</span>
           </motion.div>
 
           <div className="space-y-4">
@@ -67,20 +67,21 @@ export default function SplitHero() {
           >
             <button 
               onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-10 py-4 bg-tiktok-cyan text-black font-black uppercase tracking-widest text-xs rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(37,244,238,0.2)]"
+              className="group relative px-10 py-5 bg-tiktok-cyan text-black font-black uppercase tracking-[0.2em] text-[10px] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(37,244,238,0.2)]"
             >
-              View Resume <Zap className="w-4 h-4 inline-block ml-2 mb-1" />
+              <span className="relative z-10 flex items-center gap-3">
+                View Resume <Zap className="w-4 h-4 transition-transform group-hover:rotate-12" />
+              </span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
-            <a 
-              href="#projects"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="px-10 py-4 border border-border-main text-text-main font-black uppercase tracking-widest text-xs rounded-full hover:bg-white hover:text-black transition-all text-center flex items-center justify-center gap-2 shadow-lg"
+            <button 
+              onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+              className="group relative px-10 py-5 border border-border-main text-text-main font-black uppercase tracking-[0.2em] text-[10px] overflow-hidden transition-all hover:bg-white hover:text-black active:scale-95"
             >
-              System Lab <Monitor className="w-4 h-4" />
-            </a>
+              <span className="relative z-10 flex items-center gap-3">
+                System Lab <Monitor className="w-4 h-4" />
+              </span>
+            </button>
           </motion.div>
         </div>
 

@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import { ShieldCheck, Cpu, Code, Database, Globe, Smartphone, ArrowRight, Home, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { projects } from '../data/projects';
-import { SectionHeading } from '../App';
+import { SectionHeading } from '../components/SectionHeading';
 import Navbar from '../components/Navbar';
 
 const services = [
@@ -72,7 +72,7 @@ export default function ServicesPage({ toggleTheme, isDark }: { toggleTheme: () 
                 <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <service.icon className="w-8 h-8 text-tiktok-cyan" />
                 </div>
-                <div className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">SRV::{service.id}</div>
+                <div className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">SERVICE-{service.id}</div>
               </div>
 
               <h3 className="text-3xl font-black text-text-main uppercase tracking-tighter mb-4 group-hover:text-tiktok-cyan transition-colors">
@@ -126,7 +126,7 @@ export default function ServicesPage({ toggleTheme, isDark }: { toggleTheme: () 
                <Code className="w-4 h-4" />
             </a>
          </div>
-         <p className="text-[10px] font-mono text-gray-700 uppercase tracking-widest">Defense Solutions :: 2026</p>
+         <p className="text-[10px] font-mono text-gray-700 uppercase tracking-widest">Security Solutions 2026</p>
       </footer>
     </div>
   );

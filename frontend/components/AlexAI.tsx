@@ -4,22 +4,26 @@ import { Send, User, Bot, X, Maximize2, Minimize2, Sparkles, Terminal, Cpu, Mess
 import { projects } from '../data/projects';
 import { experiences } from '../data/experience';
 import { cn } from '../lib/utils';
-import { ai } from '../lib/gemini';
+import { ai, CHAT_MODEL } from '../lib/ai';
 
 const SYSTEM_PROMPT = `
-You are Alex, the digital twin and assistant of Alex Nyangaresi Obwogi.
+You are Alex, the digital twin and assistant of Alex N. Obwogi.
 Your personality is technically deep, focused on fullstack software engineering and hands-on cloud security.
 
-CONTEXT ABOUT ALEX NYANGARESI OBWOGI:
+CONTEXT ABOUT ALEX N. OBWOGI:
 - Final year Computer Science student at Kirinyaga University (Sep 2022 - Sep 2026).
 - Profession: Fullstack Software Engineer with a heavy focus on Mastering Cloud Security.
 - Philosophy: "You can't secure what you don't know how to build."
-- Core Achievement: SmartRent AI (Project Leader & Database Engineer).
-  * Implemented immersive Video Tours.
-  * Integrated AI Chatbots & Recommendations.
-  * Architected complex Database Schemas and RESTful APIs.
-  * Unified decoupled repositories into a production-grade MERN system.
+- Core Achievement: SmartRent AI (Capstone Project Lead, Database Engineer & API Architect).
+  * Project Narrative: A personalized PropTech ecosystem solving house-hunting friction via AI-driven matching.
+  * Technical Role: Led the entire development cycle, from database design to production deployment.
+  * System Architecture: Designed optimized MongoDB schemas and robust RESTful API endpoints.
+  * Asset Management: Integrated Cloudinary for high-performance cloud storage of housing media.
+  * Immersive CX: Developed virtual tour modules supporting both 4K video and high-res photo arrays.
+  * Geolocation Precision: Integrated Google Maps with exact GPS coordinates for physical site verification.
+  * Production Lifecycle: Managed debugging, repository integration, and successful CI/CD deployment on Render.
 - Security Focus: Linux Hardening, AWS Security Hub, Terraform IaC, defensive Python tooling.
+- Tech Stack: MERN (MongoDB, Express, React, Node.js), Cloudinary, Render, LLM Integration, Google Maps.
 - Contact: obwogialex728@gmail.com | WhatsApp (0706050538).
 - Socials: LinkedIn (linkedin.com/in/alex-obwogi-8a62113a5), GitHub (AlexObwogi).
 
@@ -35,7 +39,7 @@ export default function AlexAI() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([
-    { role: 'assistant', content: "SYSTEM_READY :: Alex_Digital_Twin online. Fullstack & Security modules loaded. Awaiting transmission." }
+    { role: 'assistant', content: "Hello! I'm Alex's digital twin. I can help you understand his projects, background, and technical skills. How can I assist you today?" }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -58,21 +62,24 @@ export default function AlexAI() {
 
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: CHAT_MODEL,
         contents: [
-            ...messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
-            { role: 'user', parts: [{ text: userMsgText }] }
+            ...messages.map(m => ({ 
+              role: m.role === 'assistant' ? 'model' : 'user' as const, 
+              parts: [{ text: m.content }] 
+            })),
+            { role: 'user' as const, parts: [{ text: userMsgText }] }
         ],
         config: {
             systemInstruction: SYSTEM_PROMPT,
         }
       });
 
-      const text = response.text || "COMM_ERROR :: NO_DATA_RETURNED";
+      const text = response.text || "Error: I couldn't generate a response.";
       setMessages(prev => [...prev, { role: 'assistant', content: text }]);
-    } catch (error) {
-      console.error("Gemini Error:", error);
-      setMessages(prev => [...prev, { role: 'assistant', content: "COMM_ERROR :: BRIDGE_OFFLINE. Check terminal logs or bandwidth." }]);
+    } catch (error: any) {
+      console.error("AI Engine Error:", error);
+      setMessages(prev => [...prev, { role: 'assistant', content: `Sorry, there was a connection issue. ${error.message}` }]);
     } finally {
       setIsTyping(false);
     }
@@ -81,16 +88,22 @@ export default function AlexAI() {
   return (
     <>
       <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => {
           setIsOpen(true);
           setIsMinimized(false);
         }}
-        className="fixed bottom-6 right-6 z-[190] w-16 h-16 bg-tiktok-cyan text-black rounded-[24px] flex items-center justify-center shadow-[0_0_40px_rgba(37,244,238,0.3)] border border-tiktok-cyan/20 group overflow-hidden"
+        className="fixed bottom-8 right-8 z-[190] group flex items-stretch h-14 bg-tiktok-cyan text-black font-black uppercase tracking-[0.2em] text-[10px] overflow-hidden shadow-2xl transition-all rounded-2xl"
       >
-        <Bot className="w-8 h-8 group-hover:scale-110 transition-transform relative z-10" />
-        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black animate-pulse" />
+        <div className="bg-black/5 px-5 flex items-center justify-center group-hover:bg-black/10 transition-colors border-r border-black/10">
+          <Bot className="w-5 h-5 transition-transform group-hover:scale-110" />
+        </div>
+        <div className="px-6 flex items-center gap-3">
+          <span>Open AI Assistant</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+        </div>
+        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
       </motion.button>
 
       <AnimatePresence>
@@ -137,7 +150,7 @@ export default function AlexAI() {
                   <h3 className="font-black text-xs uppercase tracking-[0.2em] text-white leading-tight">
                     Alex_Twin 
                   </h3>
-                  <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest block leading-none mt-1">Status: Active</span>
+                  <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest block leading-none mt-1">Status: Online</span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -205,7 +218,7 @@ export default function AlexAI() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                      placeholder="TRANS_CMD :: Ask Alex..."
+                      placeholder="Ask Alex a question..."
                       className="w-full bg-white/[0.03] border border-white/10 rounded-[24px] pl-6 pr-16 py-5 text-white text-sm focus:outline-none focus:border-white/30 transition-all placeholder:text-gray-700 font-mono tracking-tight"
                     />
                     <button 
@@ -217,7 +230,7 @@ export default function AlexAI() {
                     </button>
                   </div>
                   <p className="mt-5 text-center text-[8px] font-mono text-gray-700 uppercase tracking-[0.5em] font-black">
-                    End-to-End Encryption : Active
+                    Secure Connection Established
                   </p>
                 </div>
               </>

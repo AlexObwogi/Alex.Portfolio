@@ -5,9 +5,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { experiences } from '../data/experience';
 import { projects } from '../data/projects';
 import Navbar from '../components/Navbar';
-import { SectionHeading } from '../App';
+import { SectionHeading } from '../components/SectionHeading';
 import { cn } from '../lib/utils';
-import { generateTailoredResumeContent } from '../lib/gemini';
+import { generateTailoredResume } from '../lib/resumeAi';
 
 interface TailoredContent {
   summary: string;
@@ -52,8 +52,8 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
     setError(null);
     setStatus('generating');
     setProgress(0);
-    setLogs(['[SYSTEM] Initializing generation sequence...', '[AI] Establishing link with Gemini-Engine-01...']);
-    setCurrentStep('Analyzing_Requirements');
+    setLogs(['[SYSTEM] Initializing generation sequence...', '[AI] Establishing link with Neural-Engine-01...']);
+    setCurrentStep('Analyzing Requirements');
     
     // Progress interval simulation
     const pInterval = setInterval(() => {
@@ -64,12 +64,12 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
         if (next > 20 && next < 25) setLogs(prevLogs => [...new Set([...prevLogs, '[AI] Parsing job description metadata...'])]);
         if (next > 40 && next < 45) {
           setLogs(prevLogs => [...new Set([...prevLogs, '[SYSTEM] Matching skill vectors to project history...'])]);
-          setCurrentStep('Architecting_Narrative');
+          setCurrentStep('Architecting Narrative');
         }
         if (next > 60 && next < 65) setLogs(prevLogs => [...new Set([...prevLogs, '[AI] Optimizing for high-authority ATS terminologies...'])]);
         if (next > 80 && next < 85) {
           setLogs(prevLogs => [...new Set([...prevLogs, '[SYSTEM] Hardening experience bullet points...'])]);
-          setCurrentStep('Finalizing_Alignment');
+          setCurrentStep('Finalizing Alignment');
         }
         
         return next;
@@ -85,7 +85,7 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
 
       const userData = {
         personalInfo: {
-          name: "ALEX NYANGARESI OBWOGI",
+          name: "ALEX N. OBWOGI",
           title: "Quantitative Software Engineer & Fullstack Architect",
           email: "obwogialex728@gmail.com",
           phone: "+254 706 050 538",
@@ -107,20 +107,20 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
           {
             degree: "MSc in Financial Engineering (MScFE)",
             institution: "WorldQuant University",
-            period: "2026 - 2028 (Incoming)",
-            details: "Core focus on Stochastic Calculus, Risk Management, and Algorithmic Trading systems."
+            period: "Jun 2026 - 2028 (Incoming)",
+            details: "Intensive focus on Stochastic Calculus, Risk Management, and Algorithmic Trading. Commencing June 8, 2026."
           },
           {
             degree: "Applied Data Science Lab",
             institution: "WorldQuant University",
-            period: "2024 - Present",
-            details: "Practical implementation of machine learning models on large-scale financial datasets."
+            period: "May 2026 - Aug 2026 (Ongoing)",
+            details: "Hands-on application of machine learning and predictive modeling on high-fidelity, large-scale financial datasets."
           },
           {
             degree: "BSc Computer Science",
             institution: "Kirinyaga University",
             period: "2022 - 2026",
-            details: "High-Performance Systems and Defensive Cloud Architecture."
+            details: "Specialized in High-Performance Systems Architecture and Distributed Cloud Defense."
           }
         ],
         certifications: certifications.map((c: any) => ({
@@ -130,7 +130,8 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
         }))
       };
 
-      const result = await generateTailoredResumeContent(userData, {
+      // Generate tailored content using AI directly in frontend (as per skill guidelines)
+      const tailoredResume = await generateTailoredResume(userData, {
         description: jobDescription,
         keywords: keywords
       });
@@ -143,7 +144,7 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
       
       // Delay for UX then navigate
       setTimeout(() => {
-        navigate('/view-resume', { state: { tailoredContent: result } });
+        navigate('/view-resume', { state: { tailoredContent: tailoredResume } });
       }, 1500);
     } catch (err) {
       clearInterval(pInterval);
@@ -162,15 +163,15 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
         <div className="flex items-center gap-4 mb-20 text-[10px] font-mono tracking-[0.3em] uppercase opacity-50">
            <Link to="/" className="hover:text-tiktok-cyan transition-colors">Home</Link>
            <span>/</span>
-           <span className="text-tiktok-cyan">AI_Resume_Generation</span>
+           <span className="text-tiktok-cyan">AI Resume Generation</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
           <div className="space-y-12">
             <div>
-              <SectionHeading subtitle="AI_POWERED" title="Resume Generation." />
+              <SectionHeading subtitle="AI Powered" title="Resume Generation." />
               <p className="text-xl text-gray-400 mb-8 leading-relaxed">
-                Refine your professional narrative with <span className="text-tiktok-cyan font-bold">Gemini AI</span>. Tailor every bullet point to match target job descriptions and high-authority security keywords.
+                Refine your professional narrative with <span className="text-tiktok-cyan font-bold">Neural Engine AI</span>. Tailor your transition to Quantitative Software Engineering, emphasizing your WorldQuant University trajectory and specialized mathematical modeling.
               </p>
             </div>
 
@@ -178,7 +179,7 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
               <div className="space-y-4">
                 <label className="flex items-center gap-3 text-[10px] font-mono text-gray-500 uppercase tracking-widest">
                   <Target className="w-4 h-4 text-tiktok-cyan" />
-                  Target_Job_Description
+                  Target Job Description
                 </label>
                 <textarea 
                   value={jobDescription}
@@ -191,7 +192,7 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
               <div className="space-y-4">
                 <label className="flex items-center gap-3 text-[10px] font-mono text-gray-500 uppercase tracking-widest">
                   <Zap className="w-4 h-4 text-tiktok-cyan" />
-                  Specific_Keywords_to_Inject
+                  Specific Keywords to Inject
                 </label>
                 <input 
                   value={keywords}
@@ -220,9 +221,9 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
                     "bg-[#00FF00] text-black scale-[1.02]"
                   )}
                 >
-                  {status === 'idle' && <><Sparkles className="w-5 h-5" /> View_Resume</>}
-                  {status === 'generating' && <><Loader2 className="w-5 h-5 animate-spin" /> Generation_In_Progress_{Math.round(progress)}%</>}
-                  {status === 'ready' && <><CheckCircle className="w-5 h-5" /> Redirecting_to_Vault...</>}
+                  {status === 'idle' && <><Sparkles className="w-5 h-5" /> View Resume</>}
+                  {status === 'generating' && <><Loader2 className="w-5 h-5 animate-spin" /> Generation in Progress {Math.round(progress)}%</>}
+                  {status === 'ready' && <><CheckCircle className="w-5 h-5" /> Opening Resume...</>}
                   
                   {status === 'idle' && (
                     <div className="absolute inset-x-[-100%] inset-y-0 bg-white/20 hover:animate-shimmer" />
@@ -270,45 +271,60 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
                 </div>
 
                 {status === 'generating' && (
-                   <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-8 gap-8">
-                      <div className="relative">
+                   <div className="absolute inset-0 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-8 gap-8 z-20">
+                      <div className="relative group">
+                        <div className="absolute inset-0 bg-tiktok-cyan/20 blur-3xl rounded-full animate-pulse" />
                         <motion.div 
                           animate={{ rotate: 360 }}
-                          transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-                          className="w-32 h-32 border-[2px] border-tiktok-cyan/10 border-t-tiktok-cyan rounded-full" 
+                          transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+                          className="w-40 h-40 border-[1px] border-tiktok-cyan/10 border-t-tiktok-cyan rounded-full relative z-10" 
                         />
-                        <div className="absolute inset-0 flex items-center justify-center flex-col">
-                          <span className="font-mono text-xl font-black text-tiktok-cyan">{Math.round(progress)}%</span>
-                          <span className="text-[6px] font-mono text-tiktok-cyan/50 uppercase tracking-widest">Progress</span>
+                        <div className="absolute inset-0 flex items-center justify-center flex-col z-20">
+                          <motion.span 
+                            key={Math.round(progress)}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="font-mono text-3xl font-black text-tiktok-cyan drop-shadow-[0_0_10px_rgba(37,244,238,0.5)]"
+                          >
+                            {Math.round(progress)}%
+                          </motion.span>
+                          <span className="text-[7px] font-mono text-tiktok-cyan/60 uppercase tracking-[0.4em] mt-1">AI Progress</span>
                         </div>
                       </div>
                       
-                      <div className="w-full space-y-4">
+                      <div className="w-full space-y-6 max-w-sm px-4">
                         <div className="text-center">
-                          <p className="font-mono text-[10px] text-tiktok-cyan tracking-[0.4em] animate-pulse uppercase mb-2">
-                             {currentStep || "Neural_Processing"}
-                          </p>
-                          <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                          <motion.p 
+                            key={currentStep}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="font-mono text-[10px] text-tiktok-cyan tracking-[0.5em] font-black uppercase mb-3 drop-shadow-[0_0_5px_rgba(37,244,238,0.3)]"
+                          >
+                             {currentStep?.replaceAll('_', ' ') || "AI INITIALIZING"}
+                          </motion.p>
+                          <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden border border-white/5 relative">
                              <motion.div 
-                               className="h-full bg-tiktok-cyan shadow-[0_0_15px_rgba(37,244,238,0.5)]"
+                               className="h-full bg-tiktok-cyan shadow-[0_0_20px_rgba(37,244,238,0.8)] relative z-10"
                                initial={{ width: 0 }}
                                animate={{ width: `${progress}%` }}
                              />
+                             <div className="absolute inset-0 bg-tiktok-cyan/10 animate-pulse" />
                           </div>
                         </div>
 
-                        <div className="bg-black/50 border border-white/5 rounded-2xl p-4 h-32 overflow-hidden flex flex-col">
-                           <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
+                        <div className="bg-black/60 border border-white/5 rounded-3xl p-5 h-40 overflow-hidden flex flex-col shadow-inner">
+                           <div className="flex-1 overflow-y-auto space-y-2 custom-scrollbar pr-2">
                               <AnimatePresence mode="popLayout">
                                 {logs.map((log, i) => (
                                   <motion.p 
                                     key={log + i}
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    className="text-[8px] font-mono text-gray-500 flex gap-2"
+                                    className="text-[9px] font-mono text-gray-500 flex gap-2 items-center"
                                   >
-                                    <span className="text-tiktok-cyan opacity-50">[{new Date().toLocaleTimeString('en-US', { hour12: false, minute: '2-digit', second: '2-digit' })}]</span>
-                                    {log}
+                                    <span className="text-tiktok-cyan/40 shrink-0">[{new Date().toLocaleTimeString('en-US', { hour12: false, minute: '2-digit', second: '2-digit' })}]</span>
+                                    <span className="text-gray-400">{log}</span>
+                                    {i === logs.length - 1 && <span className="w-1.5 h-3 bg-tiktok-cyan animate-pulse shrink-0" />}
                                   </motion.p>
                                 ))}
                               </AnimatePresence>
@@ -322,10 +338,46 @@ export default function ResumePage({ toggleTheme, isDark }: { toggleTheme: () =>
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="absolute inset-0 bg-tiktok-cyan/[0.02] pointer-events-none flex items-center justify-center"
+                    className="absolute inset-0 bg-black/95 backdrop-blur-2xl z-30 flex flex-col items-center justify-center p-12 overflow-hidden"
                   >
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-12 opacity-[0.03] scale-150">
-                       <CheckCircle className="w-96 h-96" />
+                    <motion.div 
+                      initial={{ scale: 0.5, rotate: -45, opacity: 0 }}
+                      animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                      transition={{ type: "spring", damping: 12 }}
+                      className="w-32 h-32 bg-tiktok-cyan rounded-full flex items-center justify-center mb-8 relative"
+                    >
+                      <div className="absolute inset-0 bg-tiktok-cyan blur-3xl opacity-40 animate-pulse scale-150" />
+                      <CheckCircle className="w-16 h-16 text-black relative z-10" strokeWidth={3} />
+                    </motion.div>
+                    
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-center space-y-4"
+                    >
+                      <h3 className="text-2xl font-black text-white uppercase tracking-[0.2em]">Strategy Aligned.</h3>
+                      <p className="font-mono text-[10px] text-tiktok-cyan tracking-[0.4em] uppercase opacity-80">Transferring to secure viewing vault</p>
+                      
+                      <div className="flex justify-center gap-2 pt-4">
+                        {[0, 1, 2].map(i => (
+                          <motion.div 
+                            key={i}
+                            animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                            transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
+                            className="w-1 h-1 bg-tiktok-cyan rounded-full"
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+
+                    <div className="absolute inset-x-0 bottom-0 h-1 bg-white/5">
+                      <motion.div 
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 1.5, ease: "easeInOut" }}
+                        className="h-full bg-tiktok-cyan shadow-[0_0_20px_rgba(37,244,238,1)]"
+                      />
                     </div>
                   </motion.div>
                 )}

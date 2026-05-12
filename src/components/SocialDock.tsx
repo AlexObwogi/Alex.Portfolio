@@ -6,7 +6,7 @@ export default function SocialDock() {
   const whatsappMsg = encodeURIComponent("Hi, I saw your portfolio and would like to connect regarding a project.");
   
   const socialLinks = [
-    { icon: Mail, href: 'mailto:obwogialex0@gmail.com', label: 'Email' },
+    { icon: Mail, href: 'mailto:obwogialex728@gmail.com', label: 'Email' },
     { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
     { icon: Github, href: 'https://github.com', label: 'GitHub' },
     { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },

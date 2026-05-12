@@ -3,23 +3,15 @@ import { motion } from 'motion/react';
 import { Award, ShieldCheck, Clock, Bookmark, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { SectionHeading } from '../App';
+import { SectionHeading } from '../components/SectionHeading';
 import { cn } from '../lib/utils';
-
-interface Certification {
-  id: string;
-  title: string;
-  issuer: string;
-  date: string;
-  status: 'completed' | 'in-progress';
-  iconUrl?: string;
-}
+import { Certification } from '../types';
 
 export default function CertificationsPage({ toggleTheme, isDark }: { toggleTheme: () => void, isDark: boolean }) {
   const [certs, setCerts] = useState<Certification[]>([]);
 
   useEffect(() => {
-    fetch('/api/certifications')
+    fetch(`/api/certifications?t=${Date.now()}`, { cache: 'no-store' })
       .then(res => {
         if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) throw new Error('Invalid JSON');
         return res.json();
@@ -27,7 +19,8 @@ export default function CertificationsPage({ toggleTheme, isDark }: { toggleThem
       .then(data => {
         const normalizedData = data.map((c: any, i: number) => ({
           ...c,
-          id: c.id || c._id?.toString() || `cert-${i}`
+          id: c.id || c._id?.toString() || `cert-${i}`,
+          status: c.status || 'completed'
         }));
         // Mocking some in-progress for demo if none exist
         if (normalizedData.length < 5) {
@@ -35,7 +28,7 @@ export default function CertificationsPage({ toggleTheme, isDark }: { toggleThem
             { id: 'm1', title: 'AWS Certified Security - Specialty', issuer: 'Amazon Web Services', date: 'Expected 2026', status: 'in-progress' },
             { id: 'm2', title: 'OSCP :: OffSec Certified Professional', issuer: 'OffSec', date: 'In Training', status: 'in-progress' }
           ];
-          setCerts([...normalizedData.map((c: any) => ({ ...c, status: 'completed' })), ...mockInProgress]);
+          setCerts([...normalizedData, ...mockInProgress]);
         } else {
           setCerts(normalizedData);
         }
@@ -104,20 +97,24 @@ export default function CertificationsPage({ toggleTheme, isDark }: { toggleThem
                         <ShieldCheck className="w-4 h-4 text-green-500/50" />
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-4">
                         <button 
                           onClick={() => window.open(cert.iconUrl || '#', '_blank')}
-                          className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-400 hover:bg-tiktok-cyan hover:text-black hover:border-tiktok-cyan transition-all"
+                          className="group relative flex items-center justify-center gap-3 py-4 bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[0.2em] text-text-main overflow-hidden transition-all hover:bg-tiktok-cyan hover:text-black hover:border-tiktok-cyan"
                         >
-                          View Certificate <Bookmark className="w-3 h-3" />
+                          <span className="relative z-10">View Certificate</span>
+                          <Bookmark className="w-3 h-3 relative z-10 group-hover:fill-current" />
+                          <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/20 group-hover:h-full transition-all duration-300" />
                         </button>
                         <a 
                           href="https://www.wqu.edu/verify" 
                           target="_blank" 
                           rel="noreferrer"
-                          className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-400 hover:bg-white hover:text-black transition-all"
+                          className="group relative flex items-center justify-center gap-3 py-4 bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 overflow-hidden transition-all hover:bg-white hover:text-black hover:border-white"
                         >
-                          Verify <ExternalLink className="w-3 h-3" />
+                          <span className="relative z-10">Verify</span>
+                          <ExternalLink className="w-3 h-3 relative z-10" />
+                          <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/20 group-hover:h-full transition-all duration-300" />
                         </a>
                       </div>
                     </div>
@@ -131,7 +128,7 @@ export default function CertificationsPage({ toggleTheme, isDark }: { toggleThem
           <section>
             <div className="flex items-center gap-4 mb-12">
                <Clock className="w-6 h-6 text-tiktok-red" />
-               <h3 className="text-2xl font-black text-text-main uppercase tracking-widest">Active Acquisitions</h3>
+               <h3 className="text-2xl font-black text-text-main uppercase tracking-widest">My Credentials</h3>
                <div className="flex-1 h-[1px] bg-white/5" />
             </div>
             

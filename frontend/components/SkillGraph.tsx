@@ -33,7 +33,7 @@ const SKILL_DATA = {
     { id: 'PostgreSQL', group: 3, radius: 28, color: '#336791' },
 
     // AI/ML
-    { id: 'Gemini AI', group: 4, radius: 40, color: '#FFB800' },
+    { id: 'Agentic AI', group: 4, radius: 40, color: '#FFB800' },
     { id: 'NLP', group: 4, radius: 25, color: '#FF9E0F' },
     { id: 'Vector DBs', group: 4, radius: 25, color: '#7E57C2' },
     
@@ -50,7 +50,7 @@ const SKILL_DATA = {
   links: [
     { source: 'Full Stack', target: 'React', value: 2 },
     { source: 'Full Stack', target: 'Node.js', value: 2 },
-    { source: 'Full Stack', target: 'Gemini AI', value: 2 },
+    { source: 'Full Stack', target: 'Agentic AI', value: 2 },
     { source: 'Full Stack', target: 'Stochastic Calculus', value: 2 },
     { source: 'Python', target: 'Risk Analytics', value: 1 },
     { source: 'Stochastic Calculus', target: 'Fixed Income', value: 1 },
@@ -62,8 +62,8 @@ const SKILL_DATA = {
     { source: 'Node.js', target: 'MongoDB', value: 1 },
     { source: 'Node.js', target: 'PostgreSQL', value: 1 },
     { source: 'Node.js', target: 'Python', value: 1 },
-    { source: 'Gemini AI', target: 'NLP', value: 1 },
-    { source: 'Gemini AI', target: 'Vector DBs', value: 1 },
+    { source: 'Agentic AI', target: 'NLP', value: 1 },
+    { source: 'Agentic AI', target: 'Vector DBs', value: 1 },
     { source: 'Node.js', target: 'Docker', value: 1 },
     { source: 'Docker', target: 'Cloud Run', value: 1 },
     { source: 'Docker', target: 'CI/CD', value: 1 },
